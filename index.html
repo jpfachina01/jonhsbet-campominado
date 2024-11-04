@@ -8,6 +8,8 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: black;
+            color: white;
         }
         table {
             margin: 20px auto;
@@ -16,13 +18,15 @@
         td {
             width: 40px;
             height: 40px;
-            border: 1px solid #000;
+            border: 1px solid #fff;
             text-align: center;
             cursor: pointer;
             font-size: 20px;
+            background-color: #222;
         }
         .bomb {
             background-color: red;
+            font-size: 30px; /* Aumenta o tamanho do emoji da bomba */
         }
         .revealed {
             background-color: lightgray;
@@ -73,6 +77,7 @@
         function revelarCelula(linha, coluna, td) {
             if (grid[linha][coluna] === 'B') {
                 td.classList.add('bomb');
+                td.textContent = '💣'; // Adiciona o emoji da bomba
                 alert('BOOM! Você ativou uma bomba!');
                 mostrarBombas();
             } else {
@@ -113,6 +118,7 @@
                 const td = document.querySelector(`#grid tr:nth-child(${linha + 1}) td:nth-child(${coluna + 1})`);
                 if (td) {
                     td.classList.add('bomb');
+                    td.textContent = '💣'; // Adiciona o emoji da bomba
                 }
             }
         }
