@@ -6,30 +6,55 @@
     <title>JonhsBet - Campo Minado</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background-color: black;
-            color: white;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: gold;
+            text-shadow: 2px 2px 5px rgba(255, 215, 0, 0.8);
         }
         table {
             margin: 20px auto;
             border-collapse: collapse;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
         td {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #fff;
+            width: 50px;
+            height: 50px;
+            border: 1px solid gold;
             text-align: center;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 24px;
             background-color: #222;
+            transition: background-color 0.3s;
+        }
+        td:hover {
+            background-color: #444; /* Muda a cor ao passar o mouse */
         }
         .bomb {
             background-color: red;
             font-size: 30px; /* Aumenta o tamanho do emoji da bomba */
         }
         .revealed {
-            background-color: lightgray;
+            background-color: #999; /* Cor das células reveladas */
+        }
+        button {
+            background-color: gold;
+            color: black;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: darkorange; /* Cor do botão ao passar o mouse */
         }
     </style>
 </head>
