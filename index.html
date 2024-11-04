@@ -70,6 +70,8 @@
         let grid = [];
         let bombas = [];
         let tamanho = 5;
+        let totalCélulasSeguras;
+        let célulasReveladas = 0;
 
         function iniciarJogo() {
             const quantidadeBombas = parseInt(document.getElementById('bombas').value);
@@ -77,6 +79,7 @@
             grid = Array.from({ length: tamanho }, () => Array(tamanho).fill(0));
             const table = document.getElementById('grid');
             table.innerHTML = '';
+            célulasReveladas = 0; // Reseta o contador de células reveladas
 
             for (let i = 0; i < quantidadeBombas; i++) {
                 let linha, coluna;
@@ -88,6 +91,7 @@
                 grid[linha][coluna] = 'B';
             }
 
+            totalCélulasSeguras = tamanho * tamanho - quantidadeBombas; // Total de células seguras
             for (let linha = 0; linha < tamanho; linha++) {
                 const tr = document.createElement('tr');
                 for (let coluna = 0; coluna < tamanho; coluna++) {
@@ -103,12 +107,18 @@
             if (grid[linha][coluna] === 'B') {
                 td.classList.add('bomb');
                 td.textContent = '💣'; // Adiciona o emoji da bomba
-                alert('BOOM! Você ativou uma bomba!');
+                alert('BOOM! Você ativou uma bomba! Você perdeu!');
                 mostrarBombas();
             } else {
                 const adjacentes = contarBombasAdjacentes(linha, coluna);
                 td.textContent = adjacentes > 0 ? adjacentes : '';
                 td.classList.add('revealed');
+                célulasReveladas++; // Incrementa o contador de células reveladas
+
+                if (célulasReveladas === totalCélulasSeguras) {
+                    alert('Parabéns! Você ganhou! Todas as células seguras foram reveladas.');
+                }
+
                 if (adjacentes === 0) {
                     for (let i = -1; i <= 1; i++) {
                         for (let j = -1; j <= 1; j++) {
