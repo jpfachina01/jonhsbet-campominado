@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campo Minado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            text-align: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .bomb {
+            background-color: red;
+        }
+        .revealed {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Campo Minado</h1>
+    <label for="bombas">Quantas bombas (1 a 12): </label>
+    <input type="number" id="bombas" min="1" max="12" value="5">
+    <button onclick="iniciarJogo()">Iniciar Jogo</button>
+
+    <table id="grid"></table>
+
+    <script>
+        let grid = [];
+        let bombas = [];
+        let tamanho = 5;
+
+        function iniciarJogo() {
+            const quantidadeBombas = parseInt(document.getElementById('bombas').value);
+            bombas = [];
+            grid = Array.from({ length: tamanho }, () => Array(tamanho).fill(0));
+            const table = document.getElementById('grid');
+            table.innerHTML = '';
+
+            for (let i = 0; i < quantidadeBombas; i++) {
+                let linha, coluna;
+                do {
+                    linha = Math.floor(Math.random() * tamanho);
+                    coluna = Math.floor(Math.random() * tamanho);
+                } while (bombas.some(b => b[0] === linha && b[1] === coluna));
+                bombas.push([linha, coluna]);
+                grid[linha][coluna] = 'B';
+            }
+
+            for (let linha = 0; linha < tamanho; linha++) {
+                const tr = document.createElement('tr');
+                for (let coluna = 0; coluna < tamanho; coluna++) {
+                    const td = document.createElement('td');
+                    td.onclick = () => revelarCelula(linha, coluna, td);
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+        }
+
+        function revelarCelula(linha, coluna, td) {
+            if (grid[linha][coluna] === 'B') {
+                td.classList.add('bomb');
+                alert('BOOM! Você ativou uma bomba!');
+                mostrarBombas();
+            } else {
+                const adjacentes = contarBombasAdjacentes(linha, coluna);
+                td.textContent = adjacentes > 0 ? adjacentes : '';
+                td.classList.add('revealed');
+                if (adjacentes === 0) {
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            if (linha + i >= 0 && linha + i < tamanho && coluna + j >= 0 && coluna + j < tamanho) {
+                                const nextTd = document.querySelector(`#grid tr:nth-child(${linha + i + 1}) td:nth-child(${coluna + j + 1})`);
+                                if (nextTd && !nextTd.classList.contains('revealed')) {
+                                    revelarCelula(linha + i, coluna + j, nextTd);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function contarBombasAdjacentes(linha, coluna) {
+            let contador = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (linha + i >= 0 && linha + i < tamanho && coluna + j >= 0 && coluna + j < tamanho) {
+                        if (grid[linha + i][coluna + j] === 'B') {
+                            contador++;
+                        }
+                    }
+                }
+            }
+            return contador;
+        }
+
+        function mostrarBombas() {
+            for (let [linha, coluna] of bombas) {
+                const td = document.querySelector(`#grid tr:nth-child(${linha + 1}) td:nth-child(${coluna + 1})`);
+                if (td) {
+                    td.classList.add('bomb');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
