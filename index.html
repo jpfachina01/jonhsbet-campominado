@@ -5,66 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JonhsBet - Campo Minado</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            background-color: #000;
-            color: #fff;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
-        h1 {
-            color: gold;
-            text-shadow: 2px 2px 5px rgba(255, 215, 0, 0.8);
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2d3436;
+            color: #dfe6e9;
         }
-        table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
-        td {
-            width: 50px;
-            height: 50px;
-            border: 1px solid gold;
+
+        .container {
             text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap; /* Permite que as células se ajustem */
+            max-width: 300px; /* Limita a largura da grade */
+        }
+
+        .cell {
+            font-size: 3rem;
+            width: 60px; /* Ajustado para uma largura fixa */
+            height: 60px; /* Ajustado para uma altura fixa */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px; /* Margem entre as células */
+            border: 2px solid #00b894;
+            border-radius: 10px;
+            background-color: #636e72;
             cursor: pointer;
-            font-size: 24px;
-            background-color: #222;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s; /* Transição suave ao passar o mouse */
         }
-        td:hover {
-            background-color: #444; /* Muda a cor ao passar o mouse */
+
+        .cell:hover {
+            background-color: #00b894; /* Cor ao passar o mouse */
         }
+
         .bomb {
             background-color: red;
-            font-size: 30px; /* Aumenta o tamanho do emoji da bomba */
+            font-size: 3rem; /* Mantém o tamanho do emoji da bomba */
         }
+
         .revealed {
-            background-color: #999; /* Cor das células reveladas */
+            background-color: #dfe6e9; /* Cor das células reveladas */
+            color: #2d3436; /* Cor do texto para células reveladas */
         }
+
         button {
-            background-color: gold;
-            color: black;
-            font-size: 18px;
             padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #0984e3;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
-            transition: background-color 0.3s;
         }
+
         button:hover {
-            background-color: darkorange; /* Cor do botão ao passar o mouse */
+            background-color: #74b9ff; /* Cor do botão ao passar o mouse */
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: #dfe6e9; /* Mantém a cor do texto da mensagem */
         }
     </style>
 </head>
 <body>
-    <h1>Campo Minado - JonhsBet</h1>
-    <label for="bombas">Quantas bombas (1 a 15): </label>
-    <input type="number" id="bombas" min="1" max="15" value="5">
-    <button onclick="iniciarJogo()">Iniciar Jogo</button>
+    <div class="container">
+        <h1>Campo Minado - JonhsBet</h1>
+        <label for="bombas">Quantas bombas (1 a 15): </label>
+        <input type="number" id="bombas" min="1" max="15" value="5">
+        <button onclick="iniciarJogo()">Iniciar Jogo</button>
+        
+        <div class="grid" id="grid"></div>
 
-    <table id="grid"></table>
+        <div id="mensagem"></div>
+    </div>
 
     <script>
         let grid = [];
@@ -77,8 +111,8 @@
             const quantidadeBombas = parseInt(document.getElementById('bombas').value);
             bombas = [];
             grid = Array.from({ length: tamanho }, () => Array(tamanho).fill(0));
-            const table = document.getElementById('grid');
-            table.innerHTML = '';
+            const gridElement = document.getElementById('grid');
+            gridElement.innerHTML = '';
             célulasReveladas = 0; // Reseta o contador de células reveladas
 
             for (let i = 0; i < quantidadeBombas; i++) {
@@ -93,26 +127,25 @@
 
             totalCélulasSeguras = tamanho * tamanho - quantidadeBombas; // Total de células seguras
             for (let linha = 0; linha < tamanho; linha++) {
-                const tr = document.createElement('tr');
                 for (let coluna = 0; coluna < tamanho; coluna++) {
-                    const td = document.createElement('td');
-                    td.onclick = () => revelarCelula(linha, coluna, td);
-                    tr.appendChild(td);
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.onclick = () => revelarCelula(linha, coluna, cell);
+                    gridElement.appendChild(cell);
                 }
-                table.appendChild(tr);
             }
         }
 
-        function revelarCelula(linha, coluna, td) {
+        function revelarCelula(linha, coluna, cell) {
             if (grid[linha][coluna] === 'B') {
-                td.classList.add('bomb');
-                td.textContent = '💣'; // Adiciona o emoji da bomba
+                cell.classList.add('bomb');
+                cell.textContent = '💣'; // Adiciona o emoji da bomba
                 alert('BOOM! Você ativou uma bomba! Você perdeu!');
                 mostrarBombas();
             } else {
                 const adjacentes = contarBombasAdjacentes(linha, coluna);
-                td.textContent = adjacentes > 0 ? adjacentes : '';
-                td.classList.add('revealed');
+                cell.textContent = adjacentes > 0 ? adjacentes : '';
+                cell.classList.add('revealed');
                 célulasReveladas++; // Incrementa o contador de células reveladas
 
                 if (célulasReveladas === totalCélulasSeguras) {
@@ -123,9 +156,9 @@
                     for (let i = -1; i <= 1; i++) {
                         for (let j = -1; j <= 1; j++) {
                             if (linha + i >= 0 && linha + i < tamanho && coluna + j >= 0 && coluna + j < tamanho) {
-                                const nextTd = document.querySelector(`#grid tr:nth-child(${linha + i + 1}) td:nth-child(${coluna + j + 1})`);
-                                if (nextTd && !nextTd.classList.contains('revealed')) {
-                                    revelarCelula(linha + i, coluna + j, nextTd);
+                                const nextCell = document.querySelector(`#grid .cell:nth-child(${(linha + i) * tamanho + (coluna + j) + 1})`);
+                                if (nextCell && !nextCell.classList.contains('revealed')) {
+                                    revelarCelula(linha + i, coluna + j, nextCell);
                                 }
                             }
                         }
@@ -150,10 +183,10 @@
 
         function mostrarBombas() {
             for (let [linha, coluna] of bombas) {
-                const td = document.querySelector(`#grid tr:nth-child(${linha + 1}) td:nth-child(${coluna + 1})`);
-                if (td) {
-                    td.classList.add('bomb');
-                    td.textContent = '💣'; // Adiciona o emoji da bomba
+                const cell = document.querySelector(`#grid .cell:nth-child(${linha * tamanho + coluna + 1})`);
+                if (cell) {
+                    cell.classList.add('bomb');
+                    cell.textContent = '💣'; // Adiciona o emoji da bomba
                 }
             }
         }
